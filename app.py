@@ -4,6 +4,7 @@ from flask_marshmallow import Marshmallow
 import logging as logger
 from datetime import datetime
 import json
+
 logger.basicConfig(level="DEBUG")
 app = Flask(__name__)
 
@@ -11,6 +12,7 @@ app = Flask(__name__)
 @app.route('/api')
 def hello_world():
     return jsonify({'msg': "Hello World!!!"})
+
 
 # Database
 app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+mysqlconnector://teleuser:tele1!!qwer!Q@192.168.10.100/betbrightflask'
@@ -20,6 +22,7 @@ app.config['JSON_SORT_KEYS'] = False
 db = SQLAlchemy(app)
 # Init ma
 ma = Marshmallow(app)
+
 
 # Match Class/Model
 class Match(db.Model):
@@ -43,15 +46,19 @@ class Match(db.Model):
         self.market = market
         self.market_id = market['id']
         self.created = datetime.now()
+
+
 # Match Schema
 class MatchSchema(ma.Schema):
     class Meta:
         fields = ('id', 'name', 'url', 'startTime', 'sport', 'sport_id', 'market', 'market_id', 'created')
 
+
 # Part Match Schema
 class PartMatchSchema(ma.Schema):
     class Meta:
         fields = ('id', 'name', 'url', 'startTime')
+
 
 # Sport Class/Model
 class Sport(db.Model):
@@ -62,9 +69,11 @@ class Sport(db.Model):
         self.id = id
         self.name = name
 
+
 class SportSchema(ma.Schema):
     class Meta:
         fields = ('id', 'name')
+
 
 # Market Class/Model
 class Market(db.Model):
@@ -78,10 +87,13 @@ class Market(db.Model):
         self.name = name
         self.selections = selections
         self.created = datetime.now()
+
+
 # Market Schema
 class MarketSchema(ma.Schema):
     class Meta:
         fields = ('id', 'name', 'selections', 'created')
+
 
 # Selections Class/Model
 class Selections(db.Model):
@@ -99,10 +111,13 @@ class Selections(db.Model):
         self.market_id = market_id
         self.created = datetime.now()
         self.last_modified = datetime.now()
+
+
 # Selections Schema
 class SelectionsSchema(ma.Schema):
     class Meta:
         field = ('id', 'name', 'odds', 'market_id', 'created', 'last_modified')
+
 
 # Message Class/Model
 class Message(db.Model):
@@ -116,14 +131,17 @@ class Message(db.Model):
         self.type = type
         self.eventId = eventId
         self.created = datetime.now()
+
+
 # Message Schema
 class MessageSchema(ma.Schema):
     class Meta:
         field = ('id', 'type', 'eventId', 'created')
 
+
 # Before running the following code, initialize DB with several above tables first
-#>>> from app import db
-#>>> db.create_all()
+# >>> from app import db
+# >>> db.create_all()
 
 # Init schema (Important!!!)
 match_schema = MatchSchema()
@@ -141,17 +159,16 @@ message_schema = MessageSchema()
 messages_schema = MessageSchema(many=True)
 
 
-
-
 # Get all match
-@app.route('/api/match/all', methods = ['GET'])
+@app.route('/api/match/all', methods=['GET'])
 def get_matches():
     all_matches = Match.query.all()
     result = matches_schema.dump(all_matches)
     return matches_schema.jsonify(result)
 
+
 # Retrieve matches by filter conditions
-@app.route("/api/match/", methods = ['GET'])
+@app.route("/api/match/", methods=['GET'])
 def retrieve_match():
     sport_name = request.args.get('sport', None)
     ordering = request.args.get("ordering", None)
@@ -168,8 +185,9 @@ def retrieve_match():
         matches = []
     return part_matches_schema.jsonify(part_matches_schema.dump(matches))
 
+
 # Get one match
-@app.route("/api/match/<id>", methods = ['GET'])
+@app.route("/api/match/<id>", methods=['GET'])
 def get_match(id):
     match = match_schema.dump(Match.query.get(id))
     match_body = {
@@ -185,8 +203,9 @@ def get_match(id):
     else:
         return jsonify(match_body)
 
+
 # Update Event
-@app.route('/api/match/message', methods = ['GET', 'PUT'])
+@app.route('/api/match/message', methods=['GET', 'PUT'])
 def update_event():
     try:
         message_id = request.json['id']
@@ -239,7 +258,7 @@ def update_event():
 
 
 # POST NewEvent
-@app.route('/api/match/message', methods = ['GET', 'POST'])
+@app.route('/api/match/message', methods=['GET', 'POST'])
 def create_event():
     try:
         message_id = request.json['id']
@@ -247,7 +266,7 @@ def create_event():
         event = request.json['event']
     except KeyError as e:
         return {'Error': "{} is not provided".format(e)}, 500
-    #print("Step 1")
+    # print("Step 1")
     try:
         event_id = event['id']
         event_name = event['name']
@@ -264,7 +283,7 @@ def create_event():
 
     except Exception as e:
         return {'Error: {}'.format(str(e))}, 500
-    #print("step 2")
+    # print("step 2")
     new_match = Match(event_id,
                       event_name,
                       "http://127.0.0.1:6000/api/match/{}".format(event_id),
@@ -275,7 +294,7 @@ def create_event():
     new_market = Market(market_id, market_name, selections)
     new_message = Message(message_id, message_type, event_id)
     new_selections = []
-    #print("selections: {}".format(selections))
+    # print("selections: {}".format(selections))
     for selection in selections:
         s_id = selection['id']
         s_name = selection['name']
@@ -300,6 +319,7 @@ def create_event():
             else:
                 return str(e), 500
     return jsonify({"id": message_id, "message_type": message_type, "event": event}), 201
+
 
 if __name__ == '__main__':
     logger.debug("Start the application")
