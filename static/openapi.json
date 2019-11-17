@@ -1,0 +1,483 @@
+{
+  "info": {
+    "description": "This is a sample server showing the match events bo Betbright.",
+    "title": "Betbright Match APIs",
+    "version": ""
+  },
+  "openapi": "3.0.0",
+  "tags": [
+    {
+      "name": "match",
+      "description": "Everything about Match Event"
+    }
+  ],
+  "paths": {
+    "/api/match/?sport={sportname}&ordering={startTime}": {
+      "get": {
+        "operationId": "match_list",
+        "description": "Get all related match data with given sport name and ordering starTime",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "sport",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "Football",
+                "Basketball",
+                "Rugby",
+                "Boating"
+              ],
+              "example": "Football"
+            }
+          },
+          {
+            "in": "query",
+            "name": "ordering",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "startTime",
+                "name"
+              ],
+              "example": "startTme"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "content": {
+              "ArrayOfUsers": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "integer"
+                    },
+                    "url": {
+                      "type": "string"
+                    },
+                    "name": {
+                      "type": "string"
+                    },
+                    "startTime": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "example": [
+                  {
+                    "id": 994839351740,
+                    "url": "http://example.com/api/match/994839351740",
+                    "name": "Real Madrid vs Barcelona",
+                    "startTime": "2018-06-20T10:30:00"
+                  },
+                  {
+                    "id": 994839351790,
+                    "url": "http://example.com/api/match/994839351790",
+                    "name": "Ireland vs China",
+                    "startTime": "2018-06-27T10:30:00"
+                  }
+                ]
+              }
+            },
+            "$ref": ""
+          },
+          "400": {
+            "description": "Invalid status value"
+          }
+        },
+        "tags": [
+          "match"
+        ]
+      }
+    },
+    "/api/match/?name={matchName}": {
+      "get": {
+        "operationId": "match_list",
+        "description": "Get all related match data with given match name between 2 or 3 teams",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "name",
+            "schema": {
+              "type": "string",
+              "example": "Football"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "content": {
+              "ArrayOfUsers": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "integer"
+                    },
+                    "url": {
+                      "type": "string"
+                    },
+                    "name": {
+                      "type": "string"
+                    },
+                    "startTime": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "example": [
+                  {
+                    "id": 994839351740,
+                    "url": "http://example.com/api/match/994839351740",
+                    "name": "Real Madrid vs Barcelona",
+                    "startTime": "2018-06-20T10:30:00"
+                  },
+                  {
+                    "id": 994839351790,
+                    "url": "http://example.com/api/match/994839351790",
+                    "name": "Ireland vs China",
+                    "startTime": "2018-06-27T10:30:00"
+                  }
+                ]
+              }
+            },
+            "$ref": ""
+          },
+          "400": {
+            "description": "Invalid status value"
+          }
+        },
+        "tags": [
+          "match"
+        ]
+      }
+    },
+    "/api/match/message/create": {
+      "post": {
+        "description": "Post an event json request for new event creation",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "integer",
+                    "example": 8661032861909884224
+                  },
+                  "message_type": {
+                    "type": "string",
+                    "example": "NewEvent"
+                  },
+                  "event": {
+                    "type": "object",
+                    "example": {
+                      "id": 994839351740,
+                      "name": "Real Madrid vs Barcelona",
+                      "startTime": "2018-06-20 10:30:00",
+                      "sport": {
+                        "id": 221,
+                        "name": "Football"
+                      },
+                      "markets": [
+                        {
+                          "id": 385086549360973392,
+                          "name": "Winner",
+                          "selections": [
+                            {
+                              "id": 8243901714083343527,
+                              "name": "Real Madrid",
+                              "odds": 1.01
+                            },
+                            {
+                              "id": 5737666888266680774,
+                              "name": "Barcelona",
+                              "odds": 1.01
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "content": {
+              "application/json": {
+                "type": "object",
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "integer",
+                      "example": 8661032861909884000
+                    },
+                    "message_type": {
+                      "type": "String",
+                      "example": "NewEvent"
+                    },
+                    "event": {
+                      "type": "object",
+                      "example": {
+                        "id": 994839351740,
+                        "name": "Real Madrid vs Barcelona",
+                        "startTime": "2018-06-20 10:30:00",
+                        "sport": {
+                          "id": 221,
+                          "name": "Football"
+                        },
+                        "markets": [
+                          {
+                            "id": 385086549360973400,
+                            "name": "Winner",
+                            "selections": [
+                              {
+                                "id": 8243901714083343000,
+                                "name": "Real Madrid",
+                                "odds": 1.01
+                              },
+                              {
+                                "id": 5737666888266680000,
+                                "name": "Barcelona",
+                                "odds": 1.01
+                              }
+                            ]
+                          }
+                        ]
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "$ref": ""
+          }
+        },
+        "tags": [
+          "match"
+        ]
+      }
+    },
+    "/api/match/message/update": {
+      "put": {
+        "operationId": "match_update_message_data",
+        "description": "Post a event json request for updating odds on existed event",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "integer",
+                    "example": 8661032861909884000
+                  },
+                  "message_type": {
+                    "type": "string",
+                    "example": "UpdateOdds"
+                  },
+                  "event": {
+                    "type": "object",
+                    "example": {
+                      "id": 994839351740,
+                      "name": "Real Madrid vs Barcelona",
+                      "startTime": "2018-06-20 10:30:00",
+                      "sport": {
+                        "id": 221,
+                        "name": "Football"
+                      },
+                      "markets": [
+                        {
+                          "id": 385086549360973400,
+                          "name": "Winner",
+                          "selections": [
+                            {
+                              "id": 8243901714083343000,
+                              "name": "Real Madrid",
+                              "odds": 1.21
+                            },
+                            {
+                              "id": 5737666888266680000,
+                              "name": "Barcelona",
+                              "odds": 1.11
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "content": {
+              "application/json": {
+                "type": "object",
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "integer",
+                      "example": 8661032861909884000
+                    },
+                    "message_type": {
+                      "type": "String",
+                      "example": "UpdateOdds"
+                    },
+                    "event": {
+                      "type": "object",
+                      "example": {
+                        "id": 994839351740,
+                        "name": "Real Madrid vs Barcelona",
+                        "startTime": "2018-06-20 10:30:00",
+                        "sport": {
+                          "id": 221,
+                          "name": "Football"
+                        },
+                        "markets": [
+                          {
+                            "id": 385086549360973400,
+                            "name": "Winner",
+                            "selections": [
+                              {
+                                "id": 8243901714083343000,
+                                "name": "Real Madrid",
+                                "odds": 1.01
+                              },
+                              {
+                                "id": 5737666888266680000,
+                                "name": "Barcelona",
+                                "odds": 1.02
+                              }
+                            ]
+                          }
+                        ]
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "$ref": ""
+          },
+          "400": {
+            "description": "Invalid status value"
+          }
+        },
+        "tags": [
+          "match"
+        ]
+      }
+    },
+    "/api/match/{id}/": {
+      "get": {
+        "summary": "Retrieve match by id",
+        "description": "Return match json data with a particular id",
+        "operationId": "match_read",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "description": "A unique integer value identifying this match json field.",
+              "title": "id",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "type": "object",
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "integer",
+                      "example": 8661032861909884000
+                    },
+                    "url": {
+                      "type": "String",
+                      "example": "http://example.com/api/match/994839351740"
+                    },
+                    "name": {
+                      "type": "String",
+                      "example": "Real Madrid vs Barcelona"
+                    },
+                    "startTime": {
+                      "type": "DateTime",
+                      "example": "2018-06-20 10:30:00+00:000"
+                    },
+                    "sport": {
+                      "type": "object",
+                      "example": {
+                        "id": 221,
+                        "name": "Football"
+                      }
+                    },
+                    "markets": {
+                      "type": "object",
+                      "example": {
+                        "markets": {
+                          "id": 385086549360973400,
+                          "name": "Winner",
+                          "selections": [
+                            {
+                              "id": "5737666888266680774",
+                              "name": "Barcelona",
+                              "odds": 1.07
+                            },
+                            {
+                              "id": 8243901714083343000,
+                              "name": "Real Madrid",
+                              "odds": 1.37
+                            }
+                          ]
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "$ref": ""
+          },
+          "400": {
+            "description": "Invalid status value"
+          },
+          "404": {
+            "description": "No found"
+          }
+        },
+        "security": [
+          {
+            "petstore_auth": [
+              "write:pets",
+              "read:pets"
+            ]
+          }
+        ],
+        "tags": [
+          "match"
+        ]
+      }
+    }
+  }
+}

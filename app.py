@@ -1,12 +1,32 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, send_from_directory
 from flask_sqlalchemy import SQLAlchemy
 from flask_marshmallow import Marshmallow
 import logging as logger
 from datetime import datetime
+
 import json
+from flask_swagger_ui import get_swaggerui_blueprint
 
 logger.basicConfig(level="DEBUG")
 app = Flask(__name__)
+
+
+@app.route('/static/<path:path>')
+def send_static(path):
+    return send_from_directory('static', path)
+
+
+SWAGGER_URL = '/swagger'
+API_URL = '/static/openapi.json'
+#API_URL = '/static/openapi.yaml'
+swaggerui_blueprint = get_swaggerui_blueprint(
+    SWAGGER_URL,
+    API_URL,
+    config={
+        'app_name': "BetbrightFlask"
+    }
+)
+app.register_blueprint(swaggerui_blueprint, url_prefix=SWAGGER_URL)
 
 
 @app.route('/api')
@@ -18,6 +38,7 @@ def hello_world():
 app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+mysqlconnector://teleuser:tele1!!qwer!Q@192.168.10.100/betbrightflask'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['JSON_SORT_KEYS'] = False
+app.config["CACHE_TYPE"] = "null"
 # Init db
 db = SQLAlchemy(app)
 # Init ma
@@ -205,7 +226,7 @@ def get_match(id):
 
 
 # Update Event
-@app.route('/api/match/message', methods=['GET', 'PUT'])
+@app.route('/api/match/message/update', methods=['GET', 'PUT'])
 def update_event():
     try:
         message_id = request.json['id']
@@ -258,7 +279,7 @@ def update_event():
 
 
 # POST NewEvent
-@app.route('/api/match/message', methods=['GET', 'POST'])
+@app.route('/api/match/message/create', methods=['GET', 'POST'])
 def create_event():
     try:
         message_id = request.json['id']
